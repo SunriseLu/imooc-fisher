@@ -5,11 +5,13 @@
 @Email   : jie.yxy@gmail.com
 @File    : yushu_book.py
 """
-from app.libs import myhttp
-from flask import current_app
+import myhttp
 
 
 class YuShuBook:
+    # isbn_url = 'http://t.yushu.im/v2/isbn/{}'
+    # keyword_url = 'http://t.yushu.im/v2/book/search?q={}&start={}&count={}'
+
     isbn_url = 'http://t.yushu.im/v2/book/isbn/{}'
     keyword_url = 'http://t.yushu.im/v2/book/search?q={}&count={}&start={}'
 
@@ -20,11 +22,6 @@ class YuShuBook:
         return result
 
     @classmethod
-    def search_by_keyword(cls, keyword, page):
-        result = myhttp.HTTP.get(cls.keyword_url.format(keyword, current_app.config['PER_PAGE'],
-                                                        cls.calculate_start(page)))
+    def search_by_keyword(cls, keyword, count=15, start=0):
+        result = myhttp.HTTP.get(cls.keyword_url.format(keyword, count, start))
         return result
-
-    @staticmethod
-    def calculate_start(page):
-        return (page - 1) * current_app.config['PER_PAGE']

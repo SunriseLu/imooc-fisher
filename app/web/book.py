@@ -9,8 +9,8 @@ from flask import jsonify, request
 
 from app.forms.book import SearchBook
 from . import web
-from app.libs.helper import is_isbn_or_key
-from app.spider.yushu_book import YuShuBook
+from helper import is_isbn_or_key
+from yushu_book import YuShuBook
 
 
 @web.route('/book/search')
@@ -28,7 +28,7 @@ def seacrh():
         isbn_or_key = is_isbn_or_key(q)
 
         if isbn_or_key == 'key':
-            result = YuShuBook.search_by_keyword(q, page)
+            result = YuShuBook.search_by_keyword(q)
         if isbn_or_key == 'isbn':
             result = YuShuBook.search_by_isbn(q)
         return jsonify(result)
