@@ -8,6 +8,7 @@
 from flask import jsonify, request
 
 from app.forms.book import SearchBook
+from app.view_models.book import BookViewModel
 from . import web
 from app.libs.helper import is_isbn_or_key
 from app.spider.yushu_book import YuShuBook
@@ -29,8 +30,10 @@ def seacrh():
 
         if isbn_or_key == 'key':
             result = YuShuBook.search_by_keyword(q, page)
+            result = BookViewModel.package_single(result,q)
         if isbn_or_key == 'isbn':
             result = YuShuBook.search_by_isbn(q)
+            result = BookViewModel.package_collection(result,q)
         return jsonify(result)
     else:
         return jsonify({'msg': '参数错误'})
