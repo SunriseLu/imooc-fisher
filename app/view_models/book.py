@@ -8,8 +8,29 @@
 
 
 class BookViewModel:
+    def __init__(self, data):
+        self.title = data['title']
+        self.publisher = data['publisher']
+        self.pages = data['pages'] or ''
+        self.author = '&'.join(data['author'])
+        self.price = data['price']
+        self.summary = data['summary'] or ''
+        self.image = data['image']
+
+class BookCollectionViewModel:
+    def __init__(self):
+        self.total = 0
+        self.books = []
+        self.keyword = ''
+
+    def fill(self, yushu_book, keyword):
+        self.total = yushu_book.total
+        self.books = [BookViewModel(book) for book in yushu_book.books]
+        self.keyword = keyword
+
+class _BookViewModel:
     data_template = {
-        'book': [],
+        'books': [],
         'total': 0,
         'keyword': ''
     }
@@ -20,7 +41,7 @@ class BookViewModel:
         returned['keyword']: keyword
         if data:
             returned['total'] = 1
-            returned['book'] = [cls.__cut_detail(data)]
+            returned['books'] = [cls.__cut_detail(data)]
         return returned
 
     @classmethod
@@ -30,7 +51,7 @@ class BookViewModel:
         if data:
             returned['total']: data['total']
             returned['books']: [cls.__cut_detail(book) for book in data['books']]
-            #列表推导式
+            # 列表推导式
         return returned
 
     @staticmethod
@@ -38,7 +59,7 @@ class BookViewModel:
         book = {
             'title': data['title'],
             'publisher': data['publisher'],
-            'pages': data['pages'] or '',#比三元还好用，简单null转为空字符
+            'pages': data['pages'] or '',  # 比三元还好用，简单null转为空字符
             'author': '、'.join(data['author']),  # 把列表每一项用顿号连接
             'price': data['price'],
             'summary': data['summary'] or '',
