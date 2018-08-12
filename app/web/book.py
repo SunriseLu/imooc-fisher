@@ -7,7 +7,7 @@
 """
 import json
 
-from flask import jsonify, request
+from flask import jsonify, request, flash, render_template
 
 from app.forms.book import SearchBook
 from app.view_models.book import BookViewModel, BookCollectionViewModel
@@ -40,6 +40,13 @@ def search():
             yushu_book.search_by_keyword(q, page)
             books.fill(yushu_book, q)
 
-        return json.dumps(books, default=lambda o: o.__dict__)
+        # return json.dumps(books, default=lambda o: o.__dict__)
+
     else:
-        return jsonify({'msg': '参数错误'})
+        # return jsonify({'msg': '参数错误'})
+        flash('搜索条件不符合要求，请重新输入')
+    return render_template('search_result.html', books=books)
+
+@web.route('/book/<isbn>/detail')
+def book_detail(isbn):
+    pass

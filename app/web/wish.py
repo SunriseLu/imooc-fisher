@@ -19,7 +19,7 @@ def save_to_wish(isbn):
 
 
 @web.route('/satisfy/wish/<int:wid>')
-@limiter.limit(key_func=limit_key_prefix)
+# @limiter.limit(key_func=limit_key_prefix)
 # @login_required
 def satisfy_wish(wid):
     pass
@@ -31,6 +31,6 @@ def redraw_from_wish(isbn):
     pass
 
 
-@limiter.limited
+# @limiter.limited
 def satifiy_with_limited():
     pass

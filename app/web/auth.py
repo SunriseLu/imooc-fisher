@@ -27,7 +27,7 @@ def forget_password(token):
 
 
 @web.route('/change/password', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def change_password():
     pass
 
