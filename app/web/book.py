@@ -9,10 +9,10 @@ import json
 
 from flask import jsonify, request, flash, render_template
 
-from app.forms.book import SearchBook
+from app.forms.book import SearchBook, SearchByISBN
 from app.view_models.book import BookViewModel, BookCollectionViewModel
 from . import web
-from app.libs.helper import is_isbn_or_key
+from app.libs.helper import is_isbn_or_key, is_isbn
 from app.spider.yushu_book import YuShuBook
 
 
@@ -47,6 +47,14 @@ def search():
         flash('搜索条件不符合要求，请重新输入')
     return render_template('search_result.html', books=books)
 
+
 @web.route('/book/<isbn>/detail')
 def book_detail(isbn):
-    pass
+    book = {}
+    if is_isbn(isbn):
+        yushu_book = YuShuBook()
+        yushu_book.search_by_isbn(isbn)
+        book = BookViewModel(yushu_book.first)
+    else:
+        flash('isbn不合符要求，请重新输入')
+    return render_template('book_detail.html', book=book, wishes={}, gifts={})

@@ -6,6 +6,7 @@
 @File    : helper.py
 """
 
+
 def is_isbn_or_key(word):
     """
     判断关键字的类型
@@ -19,3 +20,10 @@ def is_isbn_or_key(word):
     if '-' in word and len(short_word) == 10 and short_word.isdigit():
         isbn_or_key = 'isbn'
     return isbn_or_key
+
+
+def is_isbn(isbn):
+    if isbn:
+        return True if is_isbn_or_key(isbn) == 'isbn' else False
+    else:
+        return False

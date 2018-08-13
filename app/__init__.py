@@ -6,7 +6,9 @@
 @File    : __init__.py
 """
 from flask import Flask
-from app.models.book import db
+# from app.models.book import db
+from app.models import db
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object('app.secure')

@@ -16,6 +16,15 @@ class BookViewModel:
         self.price = data['price']
         self.summary = data['summary'] or ''
         self.image = data['image']
+        self.isbn = data['isbn']
+
+    @property
+    def intro(self):
+        intro_data = [self.author, self.publisher, self.price]
+        intro = filter(lambda x: True if x else False, intro_data)
+        intro = '/'.join(intro)
+        return intro
+
 
 class BookCollectionViewModel:
     def __init__(self):
@@ -27,6 +36,7 @@ class BookCollectionViewModel:
         self.total = yushu_book.total
         self.books = [BookViewModel(book) for book in yushu_book.books]
         self.keyword = keyword
+
 
 class _BookViewModel:
     data_template = {
