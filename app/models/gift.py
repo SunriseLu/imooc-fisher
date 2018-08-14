@@ -10,9 +10,9 @@ from sqlalchemy import Integer, Column, Boolean, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 from . import db
+from app.models.base import Base
 
-
-class Gift(db.Model):
+class Gift(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     launched = Column(Boolean, default=False)
     user = relationship('User')
