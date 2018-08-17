@@ -1,16 +1,26 @@
+from flask import render_template, request
 
+from app.forms.auth import RegisterForm
+from app.models import User
 from . import web
-
-
+from app.models import db
 __author__ = '七月'
 
 
 @web.route('/register', methods=['GET', 'POST'])
 def register():
-    pass
+    form = RegisterForm(request.form)
+    if request.method == 'POST' and form.validate():
+        user = User()
+        user.set_attrs(form.data)
+        db.session.add(user)
+        db.session.commit()
+        print('ok')
+    return render_template('auth/register.html',
+                           form=form)
 
 
-@web.route('/login', methods=['GET', 'POST'])
+@web.route('/login')
 def login():
     pass
 
@@ -19,8 +29,9 @@ def login():
 def forget_password_request():
     pass
 
+    # 单元测试
 
-# 单元测试
+
 @web.route('/reset/password/<token>', methods=['GET', 'POST'])
 def forget_password(token):
     pass
