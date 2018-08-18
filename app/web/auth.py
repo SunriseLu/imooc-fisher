@@ -30,6 +30,10 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user)
+            next = request.args.get('next')
+            if not next or next.startswith('/'):
+                next = url_for('web.index')
+            return redirect(next)
         else:
             flash('用户未注册或密码错误')
     return render_template('auth/login.html', form=form)
