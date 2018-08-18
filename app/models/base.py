@@ -7,7 +7,9 @@
 """
 from sqlalchemy import Column, Integer, SmallInteger
 
-from . import db
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
 class Base(db.Model):

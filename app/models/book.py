@@ -6,7 +6,6 @@
 @File    : book.py
 """
 from sqlalchemy import Column, Integer, String
-from . import db
 from app.models.base import Base
 
 class Book(Base):

@@ -8,7 +8,8 @@
 from wtforms import Form, StringField, PasswordField
 from wtforms.validators import DataRequired, Email, Length, ValidationError
 
-from app.models import User
+from app.models.user import User
+
 
 class LoginForm(Form):
     email = StringField(validators=[DataRequired(), Length(8, 64), Email(message='电子邮件不符合规范')])
