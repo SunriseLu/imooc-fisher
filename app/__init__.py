@@ -8,12 +8,17 @@
 from flask import Flask
 # from app.models.book import db
 from app.models import db
+from flask_login import LoginManager
+
+login_manager = LoginManager()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('app.secure')
     app.config.from_object('app.setting')
     register_bluepriter(app)
+
+    login_manager.init_app(app)
 
     db.init_app(app)
     db.create_all(app=app)
