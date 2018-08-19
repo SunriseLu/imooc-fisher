@@ -1,7 +1,9 @@
 from flask import flash, render_template, current_app
 
 from app.libs.helper import is_isbn
-from app.models import Gift, Wish, db
+from app.models.gift import Gift
+from app.models.wish import Wish
+from app.models.base import db
 from app.spider.yushu_book import YuShuBook
 from . import web
 from flask_login import login_required, current_user
@@ -34,10 +36,10 @@ def save_to_gifts(isbn):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
+
     else:
         flash('这本书已经添加到你的赠送清单或心愿清单中，请不要重复添加')
     return 'ok'
-
 
 @web.route('/gifts/<gid>/redraw')
 # @login_required

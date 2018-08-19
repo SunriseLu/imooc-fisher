@@ -2,9 +2,9 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user
 
 from app.forms.auth import RegisterForm, LoginForm
-from app.models import User
+from app.models.user import User
 from . import web
-from app.models import db
+from app.models.base import db
 
 __author__ = '七月'
 
