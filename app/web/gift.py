@@ -1,10 +1,10 @@
-from flask import flash, render_template, current_app
+from flask import flash, current_app, redirect, url_for
 
-from app.libs.helper import is_isbn
+
 from app.models.gift import Gift
-from app.models.wish import Wish
+
 from app.models.base import db
-from app.spider.yushu_book import YuShuBook
+
 from . import web
 from flask_login import login_required, current_user
 
@@ -28,18 +28,17 @@ def save_to_gifts(isbn):
     gift = Gift()
     user = current_user
     if gift.can_save_to_list(isbn):
-        try:
+        with db.auto_commit():
             gift.isbn = isbn
             gift.uid = user.id
             user.beans += current_app.config['ADD_BEANS_UPLOAD_ONE_BOOK']
             db.session.add(gift)
             db.session.commit()
-        except Exception as e:
-            db.session.rollback()
 
     else:
         flash('这本书已经添加到你的赠送清单或心愿清单中，请不要重复添加')
-    return 'ok'
+    return redirect(url_for('web.book_detail', isbn=isbn))
+
 
 @web.route('/gifts/<gid>/redraw')
 # @login_required

@@ -5,11 +5,10 @@
 @Email   : jie.yxy@gmail.com
 @File    : book.py
 """
-import json
 
-from flask import jsonify, request, flash, render_template
+from flask import request, flash, render_template
 
-from app.forms.book import SearchBook, SearchByISBN
+from app.forms.book import SearchBook
 from app.view_models.book import BookViewModel, BookCollectionViewModel
 from . import web
 from app.libs.helper import is_isbn_or_key, is_isbn
