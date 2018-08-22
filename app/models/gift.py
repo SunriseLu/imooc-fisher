@@ -5,8 +5,9 @@
 @Email   : jie.yxy@gmail.com
 @File    : gift.py
 """
+from flask import current_app
 from flask_login import current_user
-from sqlalchemy import Integer, Column, Boolean, ForeignKey, String
+from sqlalchemy import Integer, Column, Boolean, ForeignKey, String, desc
 from sqlalchemy.orm import relationship
 
 from app.libs.helper import is_isbn
@@ -35,3 +36,18 @@ class Gift(Base):
         if not gift_list and not wish_list:
             return True
         return False
+
+    @classmethod
+    def recent_gifts(cls):
+        recent = Gift.query.filter_by(
+            launched=False).order_by(
+            desc(Gift.create_time)).group_by(
+            Gift.isbn).limit(
+            current_app.config['RECENT_BOOK_COUNT']).distinct().all()
+        return recent
+
+    @property
+    def book(self):
+        yushu_book = YuShuBook()
+        yushu_book.search_by_isbn(self.isbn)
+        return yushu_book.first
