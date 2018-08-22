@@ -14,6 +14,7 @@ __author__ = '七月'
 @web.route('/my/gifts')
 @login_required
 def my_gifts():
+
     return 'hello gifts'
 
 
