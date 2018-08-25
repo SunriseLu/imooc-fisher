@@ -46,8 +46,11 @@ class Gift(Base):
             current_app.config['RECENT_BOOK_COUNT']).distinct().all()
         return recent
 
+
+
     @property
     def book(self):
         yushu_book = YuShuBook()
         yushu_book.search_by_isbn(self.isbn)
         return yushu_book.first
+

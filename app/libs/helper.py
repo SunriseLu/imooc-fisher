@@ -5,6 +5,7 @@
 @Email   : jie.yxy@gmail.com
 @File    : helper.py
 """
+import json
 
 
 def is_isbn_or_key(word):
@@ -27,3 +28,8 @@ def is_isbn(isbn):
         return True if is_isbn_or_key(isbn) == 'isbn' else False
     else:
         return False
+
+def return_obj_for_json(obj):
+    return json.dumps(obj, default=lambda o: o.__dict__)
+
+
