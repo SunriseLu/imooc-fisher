@@ -47,9 +47,20 @@ class User(UserMixin, Base):
         isbn_list = [gift.isbn for gift in gifts]
         wish_count_list = self.__get_wish_count(isbn_list)
         for gift in gifts:
-            gift.wish_count = self.__search_in_wish_count_list(
+            gift.wish_count = self.__search_in_count_list(
                 gift.isbn, wish_count_list)
         return gifts
+
+    @property
+    def wishs(self):
+        wishs = Wish.query.filter_by(uid = self.id, launched = False)\
+            .order_by(desc(Wish.create_time)).all()
+        isbn_list = [wish.isbn for wish in wishs]
+        gift_count_list = self.__get_gift_count(isbn_list)
+        for wish in wishs:
+            wish.gift_count = self.__search_in_count_list(
+                wish.isbn, gift_count_list)
+        return wishs
 
     def __get_wish_count(self, isbn_list):
         count_list = db.session.query(func.count(Wish.id), Wish.isbn) \
@@ -59,12 +70,20 @@ class User(UserMixin, Base):
             .group_by(Wish.isbn).all()
         return [{'count': w[0], 'isbn': w[1]} for w in count_list]
 
-    def __search_in_wish_count_list(self, isbn, _list):
+    def __search_in_count_list(self, isbn, _list):
         count = 0
         for single in _list:
             if isbn == single['isbn']:
                 count = single['count']
         return count
+
+    def __get_gift_count(self, isbn_list):
+        count_list = db.session.query(func.count(Gift.id), Gift.isbn) \
+            .filter(Gift.launched == False,
+                    Gift.isbn.in_(isbn_list),
+                    Gift.status == 1) \
+            .group_by(Gift.isbn).all()
+        return [{'count': w[0], 'isbn': w[1]} for w in count_list]
 
     @login_manager.user_loader
     def get_user(uid):

@@ -5,8 +5,9 @@
 @Email   : jie.yxy@gmail.com
 @File    : gift.py
 """
+from flask import current_app
 from flask_login import current_user
-from sqlalchemy import Integer, Column, Boolean, ForeignKey, String
+from sqlalchemy import Integer, Column, Boolean, ForeignKey, String, desc
 from sqlalchemy.orm import relationship
 
 from app.libs.helper import is_isbn
@@ -24,6 +25,7 @@ class Wish(Base):
 
 
     def can_save_to_list(self, isbn):
+        from app.models.gift import Gift
         if not isbn or not is_isbn(isbn):
             return False
         yushu_book = YuShuBook()
@@ -31,10 +33,23 @@ class Wish(Base):
         if not yushu_book.first:
             return False
         user = current_user
-        # gift_list = Gift.query.filter_by(isbn=isbn, uid=user.id, launched=False).first()
+        gift_list = Gift.query.filter_by(isbn=isbn, uid=user.id, launched=False).first()
         wish_list = Wish.query.filter_by(isbn=isbn, uid=user.id, launched=False).first()
-        # if not gift_list and not wish_list:
-        #     return True
-        if not wish_list:
+        if not gift_list and not wish_list:
             return True
         return False
+
+    @classmethod
+    def recent_gifts(cls):
+        recent = Wish.query.filter_by(
+            launched=False).order_by(
+            desc(Wish.create_time)).group_by(
+            Wish.isbn).limit(
+            current_app.config['RECENT_BOOK_COUNT']).distinct().all()
+        return recent
+
+    @property
+    def book(self):
+        yushu_book = YuShuBook()
+        yushu_book.search_by_isbn(self.isbn)
+        return yushu_book.first

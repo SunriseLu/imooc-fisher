@@ -11,7 +11,7 @@ from sqlalchemy import Integer, Column, Boolean, ForeignKey, String, desc
 from sqlalchemy.orm import relationship
 
 from app.libs.helper import is_isbn
-from app.models.wish import Wish
+
 from app.spider.yushu_book import YuShuBook
 from app.models.base import Base
 
@@ -24,6 +24,7 @@ class Gift(Base):
     isbn = Column(String(15), nullable=False, unique=True)
 
     def can_save_to_list(self, isbn):
+        from app.models.wish import Wish
         if not isbn or not is_isbn(isbn):
             return False
         yushu_book = YuShuBook()
