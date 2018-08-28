@@ -8,6 +8,7 @@ imooc的python课程练习
 4.pipenv install flask-sqlalchemy
 5.pipenv install cymysql
 6.pipenv install flask-login
+7.pipenv install flask-mail
 
 
 

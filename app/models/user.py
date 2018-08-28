@@ -5,9 +5,10 @@
 @Email   : jie.yxy@gmail.com
 @File    : user.py
 """
+from flask import current_app
 from sqlalchemy import Column, Integer, String, Boolean, Float, func, desc
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from app.models.base import Base, db
 
 from flask_login import UserMixin
@@ -53,7 +54,7 @@ class User(UserMixin, Base):
 
     @property
     def wishs(self):
-        wishs = Wish.query.filter_by(uid = self.id, launched = False)\
+        wishs = Wish.query.filter_by(uid=self.id, launched=False) \
             .order_by(desc(Wish.create_time)).all()
         isbn_list = [wish.isbn for wish in wishs]
         gift_count_list = self.__get_gift_count(isbn_list)
@@ -85,6 +86,23 @@ class User(UserMixin, Base):
             .group_by(Gift.isbn).all()
         return [{'count': w[0], 'isbn': w[1]} for w in count_list]
 
+    def generate_token(self, expirstion=600):
+        serializer = Serializer(current_app.config['SECRET_KEY'], expirstion)
+        return serializer.dumps({'id': self.id}).decode('utf-8')
+
     @login_manager.user_loader
     def get_user(uid):
         return User.query.get(int(uid))
+
+    @staticmethod
+    def reset_password(token, new_password):
+        serializer = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = serializer.loads(token.encode('utf-8'))
+        except:
+            return False
+        uid = data.get('id')
+        with db.auto_commit():
+            user = User.query.get(uid)
+            user.password = new_password
+        return True

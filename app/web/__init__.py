@@ -9,6 +9,11 @@ from flask import Blueprint
 
 web = Blueprint('web', __name__)
 
+@web.app_errorhandler(404)
+def not_found(error):
+    return '页面不存在'
+
+
 from app.web import book
 from app.web import auth
 from app.web import drift
