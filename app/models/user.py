@@ -5,14 +5,19 @@
 @Email   : jie.yxy@gmail.com
 @File    : user.py
 """
+from math import floor
+
 from flask import current_app
 from sqlalchemy import Column, Integer, String, Boolean, Float, func, desc
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
+from app.libs.pendingEnum import PendingStatus
 from app.models.base import Base, db
 
 from flask_login import UserMixin
 
+from app.models.drift import Drift
 from app.models.gift import Gift
 from app.models.wish import Wish
 from app.spider._flask_login import login_manager
@@ -53,6 +58,15 @@ class User(UserMixin, Base):
         return gifts
 
     @property
+    def summary(self):
+        return dict(
+            nickname=self.nickname,
+            beans=self.beans,
+            email=self.email,
+            send_receive=str(self.send_counter) + '/' + str(self.receive_counter)
+        )
+
+    @property
     def wishs(self):
         wishs = Wish.query.filter_by(uid=self.id, launched=False) \
             .order_by(desc(Wish.create_time)).all()
@@ -62,6 +76,16 @@ class User(UserMixin, Base):
             wish.gift_count = self.__search_in_count_list(
                 wish.isbn, gift_count_list)
         return wishs
+
+    def can_send_gift(self):
+        if self.beans < 1:
+            return False
+        success_gifts_count = Gift.query.filter_by(uid=self.id, launched=True).count()
+        success_receive_count = Drift.query.filter_by(request_id=self.id, pending=PendingStatus.Success).count()
+        return True \
+            if floor(success_gifts_count / 2) \
+               <= floor(success_receive_count) else False
+
 
     def __get_wish_count(self, isbn_list):
         count_list = db.session.query(func.count(Wish.id), Wish.isbn) \

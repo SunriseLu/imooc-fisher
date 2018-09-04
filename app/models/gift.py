@@ -23,6 +23,9 @@ class Gift(Base):
     uid = Column(Integer, ForeignKey('user.id'))
     isbn = Column(String(15), nullable=False, unique=True)
 
+    def is_yourself_gift(self, uid):
+        return True if self.uid == uid else False
+
     def can_save_to_list(self, isbn):
         from app.models.wish import Wish
         if not isbn or not is_isbn(isbn):
